@@ -6,24 +6,33 @@
 
 enum token_id_ {
     /* Keywords. */
-    DEFAULT,
-    CREATE,
-    CONFIGURE,
-    set,
-    as,
-    use,
-    Word,
-    syntax,
+    TARGET_OS = 0x0,
+    CREATE = 0x1,
+    CONFIGURE = 0x2,
+    set = 0x3,
+    as = 0x4,
+    use = 0x5,
+    Word = 0x6,
+    syntax = 0x7,
+    /* Operating Systems to support. */
+    OS_LINUX = 0x8,
+    OS_WINDOWS = 0x9,
+    /* PreAssignment values. */
+    PA_GROUNDED = 0xA,
+    PA_OVERRIDED = 0xB,
     /* Punctuation/Symbols. */
-    l_par,
-    r_par,
-    l_sqrbrack,
-    r_sqrbrack,
-    semi_colon,
-    comma,
-    string,
-    colon,
-    EndOF
+    l_par = 0xC,
+    r_par = 0xD,
+    l_sqrbrack = 0xE,
+    r_sqrbrack = 0xF,
+    l_brack = 0x10,
+    r_brack = 0x11,
+    semi_colon = 0x12,
+    comma = 0x13,
+    string = 0x14,
+    colon = 0x15,
+    hashtag = 0x16,
+    EndOF = 0x17
   };
 
 typedef struct Token {
@@ -55,12 +64,17 @@ typedef struct all_puncs {
 } all_puncs_;
 
 _all_keywords all_keywords[] = {
+    {(char *)"TARGET_OS", TARGET_OS},
     {(char *)"CREATE", CREATE},
     {(char *)"CONFIGURE", CONFIGURE},
     {(char *)"syntax", syntax},
     {(char *)"set", set},
     {(char *)"as", as},
     {(char *)"use", use},
+    {(char *)"linux", OS_LINUX},
+    {(char *)"windows", OS_WINDOWS},
+    {(char *)"GROUNDED", PA_GROUNDED},
+    {(char *)"OVERRIDE", PA_OVERRIDED}
 };
 
 all_puncs_ all_p[] = {
@@ -68,9 +82,12 @@ all_puncs_ all_p[] = {
     {(char *)")", r_par},
     {(char *)"{", l_sqrbrack},
     {(char *)"}", r_sqrbrack},
+    {(char *)"[", l_brack},
+    {(char *)"]", r_brack},
     {(char *)";", semi_colon},
     {(char *)",", comma},
     {(char *)":", colon},
+    {(char *)"#", hashtag},
     {(char *)"\"", string}
 };
 
@@ -85,7 +102,7 @@ char *get_word(_Lexer *lex)
     char *word = (char *)calloc(1, sizeof(*word));
     int index = 0;
   
-    while(lex->curr != ' ' && lex->curr != '\0' && (lex->curr >= 'a' && lex->curr <= 'z') || (lex->curr >= 'A' && lex->curr <= 'Z'))
+    while(lex->curr != ' ' && lex->curr != '\0' && lex->curr != '\n' && !(lex->curr == '(' || lex->curr == ')' || lex->curr == ':' || lex->curr == ',' || lex->curr == ';' || lex->curr == '[' || lex->curr == ']'))
     {
         word[index] = lex->curr;
         index++;
@@ -144,6 +161,7 @@ _Token *get_token(_Lexer *lex)
         if(lex->curr >= 'a' && lex->curr <= 'z' || lex->curr >= 'A' && lex->curr <= 'Z')
         {
             char *word = get_word(lex);
+            
             for(size_t i = 0; i < sizeof(all_keywords) / sizeof(all_keywords[0]); i++)
             {
                 if(strcmp(all_keywords[i].token_value, word)==0)

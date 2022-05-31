@@ -2,6 +2,7 @@
 #include "src/read.h"
 #include "src/lexer.h"
 #include "src/parser.h"
+#include "src/util.h"
 
 int main(int argc, char *argv[]) {
     char *f_content = read_file("main.m");
