@@ -1,0 +1,1 @@
+syntax: "configure.m"
