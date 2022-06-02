@@ -181,7 +181,10 @@ void parse_syntax(_Parser *p)
                 p->OS_INFO.amnt_of_types = pars->OS_INFO.amnt_of_types;
 
                 for(int i = 0; i < sizeof(pars->OS_INFO.types)/sizeof(pars->OS_INFO.types[0]); i++)
-                    p->OS_INFO.types[i] = pars->OS_INFO.types[i];
+                        p->OS_INFO.types[i] = pars->OS_INFO.types[i];
+
+                p->OS_INFO.pa = pars->OS_INFO.pa;
+        
             }
             return;
         }
@@ -219,6 +222,7 @@ void parse_hashtag(_Parser *p)
 
 _Parser *main_parser(_Parser *p)
 {
+    printf("%s", p->OS_INFO.pa.is_grounded ? "yes" : "no");
     if(p->OS_INFO.amnt_of_types > 0)
     {
         bool targets_linux = false;
